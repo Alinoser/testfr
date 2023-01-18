@@ -29,6 +29,7 @@ def save(x):
 		
 def scanner(host):
 	sock=socket.socket()
+	sock.settimeout(5)
 	try:
 		sock.connect((str(host),80))
 		payload='GET / HTTP/1.1\r\nHost: {}\r\n\r\n'.format(host)
@@ -47,18 +48,6 @@ def scanner(host):
 				except Exception as e:
 					print(e)
 	except Exception as e:print(e)
-
-def auto_replace(server,ip):
-	packet = server.recv(1024).decode('utf-8','ignore')
-	status = packet.split('\n')[0]
-	if re.match(r'HTTP/\d(\.\d)? 101',status):
-		print(f'{O}[TCP] response : {G}{status}{GR}')
-		save(f'{ip} response ==== {status}')
-	else:
-		if re.match(r'HTTP/\d(\.\d)? \d\d\d ',status):
-			server.send(b'HTTP/1.1 200 Connection established\r\n\r\n')
-			print(f'{O}[TCP] response : {R}{status}{GR}')
-			return auto_replace(server,ip)
 
 def payloadsnd(ip):
 	
